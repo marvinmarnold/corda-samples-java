@@ -1,9 +1,12 @@
 package net.corda.samples.tokentofriend.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
-import com.r3.corda.lib.tokens.contracts.states.NonFungibleToken;
+import com.r3.corda.lib.tokens.contracts.states.
+        FungibleToken;
 import com.r3.corda.lib.tokens.contracts.types.IssuedTokenType;
+import com.r3.corda.lib.tokens.money.MoneyUtilities;
 import com.r3.corda.lib.tokens.workflows.flows.rpc.IssueTokens;
+import com.r3.corda.lib.tokens.workflows.utilities.FungibleTokenBuilder;
 import com.r3.corda.lib.tokens.workflows.utilities.NonFungibleTokenBuilder;
 import net.corda.samples.tokentofriend.states.CustomTokenState;
 import net.corda.core.contracts.UniqueIdentifier;
@@ -43,7 +46,8 @@ public class IssueToken extends FlowLogic<String>{
 
         subFlow(new IssueTokens(Arrays.asList(token)));
 
-        return "\nMinted "+ amount + "USDs\nStorage Node is: "+storageNode;
+        AbstractParty storageNode = storageSelector();
+        return "\nMinted "+ amount + " USDs\nStorage Node is: " + storageNode + "\nIssued by: " + openTransact;
     }
 
     public AbstractParty storageSelector(){
