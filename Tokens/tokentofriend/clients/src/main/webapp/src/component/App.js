@@ -27,7 +27,7 @@ class App extends React.Component {
     handleSubmit(event) {
       console.log('A mint was submitted: ' + this.state.amount);
       const tokenInfo = JSON.stringify({
-        "amount": this.state.amount
+        "amount": parseFloat(this.state.amount)
       });
       console.log(tokenInfo);
 

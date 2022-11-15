@@ -46,17 +46,7 @@ public class IssueToken extends FlowLogic<String>{
 
         subFlow(new IssueTokens(Arrays.asList(token)));
 
-        AbstractParty storageNode = storageSelector();
-        return "\nMinted "+ amount + " USDs\nStorage Node is: " + storageNode + "\nIssued by: " + openTransact;
-    }
 
-    public AbstractParty storageSelector(){
-        Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0);
-        List<NodeInfo> allOtherNodes = getServiceHub().getNetworkMapCache().getAllNodes().stream().filter( it ->
-                (!it.getLegalIdentities().get(0).equals(getOurIdentity())) && (!it.getLegalIdentities().get(0).equals(notary))
-        ).collect(Collectors.toList());
-        int pick = (int) (Math.random()*(allOtherNodes.size()*10)/10);
-        return allOtherNodes.get(pick).getLegalIdentities().get(0);
+        return "\nMinted " + amount + " USDs\nIssued by: " + openTransact;
     }
-
 }

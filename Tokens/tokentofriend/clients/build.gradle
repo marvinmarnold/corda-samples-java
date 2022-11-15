@@ -89,6 +89,7 @@ task runOperatoreServer(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'net.corda.samples.tokentofriend.webserver.Starter'
     args '--server.port=10050', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
+//    args '--server.port=10050', '--config.rpc.host=localhost', '--config.rpc.port=40221', '--config.rpc.username=nfa3', '--config.rpc.password=8_nIfuA81KIu'
 }
 
 /* This task will start the springboot server that connects to your node (via RPC connection). All of the http requests

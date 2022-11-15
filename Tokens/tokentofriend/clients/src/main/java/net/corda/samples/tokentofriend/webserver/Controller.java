@@ -84,7 +84,7 @@ public class Controller {
 
         System.out.println(payload);
         JsonObject convertedObject = new Gson().fromJson(payload,JsonObject.class);
-        float amount = convertedObject.get("amount").toFloat();
+        float amount = convertedObject.get("amount").getAsFloat();
 
         try {
             String result = proxy.startTrackedFlowDynamic(IssueToken.class, amount).getReturnValue().get();
