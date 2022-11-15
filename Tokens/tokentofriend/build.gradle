@@ -19,6 +19,11 @@ buildscript {//properties that you need to build the project
         //Token
         tokens_release_group = 'com.r3.corda.lib.tokens'
         tokens_release_version = '1.2'
+        // Accounts
+        accounts_release_version = '1.0.2'
+        accounts_release_group = 'com.r3.corda.lib.accounts'
+        confidential_id_release_group = "com.r3.corda.lib.ci"
+        confidential_id_release_version = "1.0"
     }
 
     repositories {
@@ -47,6 +52,7 @@ allprojects {//Properties that you need to compile your project (The application
         maven { url 'https://software.r3.com/artifactory/corda' }
         maven { url 'https://jitpack.io' }
         //SDK lib
+        maven { url 'https://software.r3.com/artifactory/corda-lib-dev' }
         maven { url 'https://software.r3.com/artifactory/corda-lib' }
         //Gradle Plugins
         maven { url 'https://repo.gradle.org/gradle/libs-releases' }
@@ -94,6 +100,10 @@ dependencies {
     // Token SDK dependencies.
     cordapp "$tokens_release_group:tokens-contracts:$tokens_release_version"
     cordapp "$tokens_release_group:tokens-workflows:$tokens_release_version"
+
+    cordapp "$confidential_id_release_group:ci-workflows:$confidential_id_release_version"
+    cordapp "$accounts_release_group:accounts-contracts:$accounts_release_version"
+    cordapp "$accounts_release_group:accounts-workflows:$accounts_release_version"
 }
 
 //Task to deploy the nodes in order to bootstrap a network
@@ -112,6 +122,9 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapp project(':workflows')
         cordapp("$tokens_release_group:tokens-contracts:$tokens_release_version")
         cordapp("$tokens_release_group:tokens-workflows:$tokens_release_version")
+        cordapp("$confidential_id_release_group:ci-workflows:$confidential_id_release_version")
+        cordapp("$accounts_release_group:accounts-contracts:$accounts_release_version")
+        cordapp("$accounts_release_group:accounts-workflows:$accounts_release_version")
         runSchemaMigration = true //This configuration is for any CorDapps with custom schema, We will leave this as true to avoid
         //problems for developers who are not familiar with Corda. If you are not using custom schemas, you can change
         //it to false for quicker project compiling time.

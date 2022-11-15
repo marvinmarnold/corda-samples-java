@@ -1,7 +1,16 @@
 package net.corda.samples.tokentofriend.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
+import com.r3.corda.lib.accounts.contracts.states.AccountInfo;
+import com.r3.corda.lib.accounts.workflows.UtilitiesKt;
+import com.r3.corda.lib.tokens.contracts.states.FungibleToken;
 import com.r3.corda.lib.tokens.contracts.states.NonFungibleToken;
+import com.r3.corda.lib.tokens.contracts.types.TokenType;
+import com.r3.corda.lib.tokens.money.MoneyUtilities;
+import com.r3.corda.lib.tokens.workflows.utilities.QueryUtilities;
+import net.corda.core.contracts.Amount;
+import net.corda.core.contracts.StateAndRef;
+import net.corda.core.identity.Party;
 import net.corda.samples.tokentofriend.states.CustomTokenState;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
@@ -11,44 +20,40 @@ import net.corda.core.node.services.vault.QueryCriteria;
 
 import java.util.*;
 
+import static com.r3.corda.lib.tokens.workflows.utilities.QueryUtilities.sumTokenCriteria;
+import static com.r3.corda.lib.tokens.workflows.utilities.QueryUtilities.tokenAmountWithIssuerCriteria;
+
 @StartableByRPC
 public class QueryToken extends FlowLogic<String>{
 
-    private String uuid;
-    private String recipientEmail;
+    private String accountName;
 
-    public QueryToken(String uuid, String recipientEmail) {
-        this.uuid = uuid;
-        this.recipientEmail = recipientEmail;
+    public QueryToken(String accountName) {
+        this.accountName = accountName;
     }
 
     @Override
     @Suspendable
     public String call() throws FlowException {
+//        QueryCriteria heldByAccount = new QueryCriteria.VaultQueryCriteria().wit(recipientEmail);
+        Party openTransact = getOurIdentity();
+        //get account info
+        AccountInfo account = UtilitiesKt.getAccountService(this).
+                accountInfo(accountName).get(0).getState().getData();
 
-        NonFungibleToken receivedToken = null;
-        try {
-            QueryCriteria inputCriteria = new QueryCriteria.LinearStateQueryCriteria().withUuid(Arrays.asList(UUID.fromString(uuid)))
-                    .withStatus(Vault.StateStatus.UNCONSUMED);
-            receivedToken = getServiceHub().getVaultService().queryBy(NonFungibleToken.class,inputCriteria).getStates().get(0).getState().getData();
-        }catch (NoSuchElementException e){
-            return "\nERROR: Your Token ID Cannot Be Found In The System";
-        }
-        String tokenTypeStateId = receivedToken.getToken().getTokenIdentifier();
+        //specify the account id in QueryCriteria
+        QueryCriteria belongsToAccountCriteria = new QueryCriteria.VaultQueryCriteria()
+                .withExternalIds(Arrays.asList(account.getIdentifier().getId()));
 
-        CustomTokenState underlineState = null;
-        try {
-            QueryCriteria inputCriteria = new QueryCriteria.LinearStateQueryCriteria().withUuid(Arrays.asList(UUID.fromString(tokenTypeStateId)))
-                    .withStatus(Vault.StateStatus.UNCONSUMED);
-            underlineState = getServiceHub().getVaultService().queryBy(CustomTokenState.class,inputCriteria).getStates().get(0).getState().getData();
-        }catch(NoSuchElementException e){
-            return "\nERROR: Internal Error";
-        }
-        if(underlineState.getReceipient().equals(this.recipientEmail)){
-            return "\nCreator of the Token: " + underlineState.getIssuer() +
-                    "\nMessage: " + underlineState.getMessage();
-        }else{
-            return "\nToken found, but the recipient email is not matched. Please try again";
-        }
+        QueryCriteria queryCriteria = tokenAmountWithIssuerCriteria(MoneyUtilities.getUSD(), openTransact)
+                .and(belongsToAccountCriteria)
+//                .and(heldByAccount)
+                .and(sumTokenCriteria());
+        Vault.Page<FungibleToken> results = getServiceHub().getVaultService().queryBy(
+                FungibleToken.class,
+                queryCriteria);
+        Amount<TokenType> balance = QueryUtilities.rowsToAmount(MoneyUtilities.getUSD(), results);
+
+        return balance.toString();
     }
 }
