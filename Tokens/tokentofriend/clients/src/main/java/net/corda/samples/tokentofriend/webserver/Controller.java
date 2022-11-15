@@ -84,16 +84,10 @@ public class Controller {
 
         System.out.println(payload);
         JsonObject convertedObject = new Gson().fromJson(payload,JsonObject.class);
-        String sender = convertedObject.get("senderEmail").toString();
-        String senderStr = sender.substring(1,sender.length()-1);
-        String receiver = convertedObject.get("recipientEmail").toString();
-        String receiverStr = receiver.substring(1,receiver.length()-1);
-        String message = convertedObject.get("secretMessage").toString();
-        String messageStr = message.substring(1,message.length()-1);
+        float amount = convertedObject.get("amount").toFloat();
 
         try {
-            String tokenStateId = proxy.startTrackedFlowDynamic(CreateMyToken.class,senderStr,receiverStr,messageStr).getReturnValue().get().toString();
-            String result = proxy.startTrackedFlowDynamic(IssueToken.class,tokenStateId).getReturnValue().get();
+            String result = proxy.startTrackedFlowDynamic(IssueToken.class, amount).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

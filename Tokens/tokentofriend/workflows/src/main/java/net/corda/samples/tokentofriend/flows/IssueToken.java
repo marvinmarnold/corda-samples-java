@@ -22,44 +22,28 @@ import java.util.stream.Collectors;
 @StartableByRPC
 public class IssueToken extends FlowLogic<String>{
 
-    private String uuid;
+    private float amount;
 
-    public IssueToken(String uuid) {
-        this.uuid = uuid;
+    public IssueToken(float amount) {
+        this.amount = amount;
     }
 
     @Override
     @Suspendable
     public String call() throws FlowException {
         /* Get a reference of own identity */
-        Party issuer = getOurIdentity();
+        Party openTransact = getOurIdentity();
 
-        /* Fetch the house state from the vault using the vault query */
-
-        QueryCriteria inputCriteria = new QueryCriteria.LinearStateQueryCriteria()
-                .withUuid(Arrays.asList(UUID.fromString(uuid))).withStatus(Vault.StateStatus.UNCONSUMED);
-        CustomTokenState customTokenState = getServiceHub().getVaultService().queryBy(CustomTokenState.class,inputCriteria)
-                .getStates().get(0).getState().getData();
-
-        /*
-         * Create an instance of IssuedTokenType, it is used by our Non-Fungible token which would be issued to the owner. Note that the IssuedTokenType takes
-         * a TokenPointer as an input, since EvolvableTokenType is not TokenType, but is a LinearState. This is done to separate the state info from the token
-         * so that the state can evolve independently.
-         * IssuedTokenType is a wrapper around the TokenType and the issuer.
-         * */
-        IssuedTokenType issuedToken = new NonFungibleTokenBuilder()
-                .issuedBy(getOurIdentity())
-                .ofTokenType(customTokenState.toPointer())
-                .buildIssuedTokenType();
-
-        /* Create an instance of the non-fungible house token with the owner as the token holder. The last paramter is a hash of the jar containing the TokenType, use the helper function to fetch it. */
-        AbstractParty storageNode = storageSelector();
-        UniqueIdentifier tokenId = new UniqueIdentifier();
-        NonFungibleToken token = new NonFungibleToken(issuedToken,storageNode,tokenId);
+        FungibleToken token = new FungibleTokenBuilder()
+                .ofTokenType(MoneyUtilities.getUSD())
+                .withAmount(amount)
+                .issuedBy(openTransact)
+                .heldBy(openTransact)
+                .buildFungibleToken();
 
         subFlow(new IssueTokens(Arrays.asList(token)));
 
-        return "\nMessage: "+ customTokenState.getMessage() + "\nToken Id is: "+tokenId+"\nStorage Node is: "+storageNode;
+        return "\nMinted "+ amount + "USDs\nStorage Node is: "+storageNode;
     }
 
     public AbstractParty storageSelector(){

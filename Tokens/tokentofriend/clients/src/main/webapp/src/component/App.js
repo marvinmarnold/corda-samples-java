@@ -13,9 +13,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      seEmail:'',
-      reEmail:'',
-      message:'',
+      amount:'',
       callback:''};
 
       this.handleChange = this.handleChange.bind(this);
@@ -27,11 +25,9 @@ class App extends React.Component {
     }
 
     handleSubmit(event) {
-      console.log('A token was submitted: \nSender: '+ this.state.seEmail+'\nReceiver: '+this.state.reEmail+'\nMessage'+this.state.message);
+      console.log('A mint was submitted: ' + this.state.amount);
       const tokenInfo = JSON.stringify({
-        "senderEmail": this.state.seEmail,
-        "recipientEmail": this.state.reEmail,
-        "secretMessage": this.state.message
+        "amount": this.state.amount
       });
       console.log(tokenInfo);
 
@@ -69,7 +65,7 @@ class App extends React.Component {
               <div>
                 <p>USD amount</p>
                 <input
-                  type="text"  className="form-control" name="usdAmount" onChange={this.handleChange} />
+                  type="text" className="form-control" name="amount" onChange={this.handleChange} />
               </div>
               <br />
               <div className="row">
@@ -83,7 +79,7 @@ class App extends React.Component {
           <Container>
             {this.state.callback != '' &&
               <div>
-                <h4>Here is your Token Information: </h4>
+                <h4>Here is your confirmation number: </h4>
                 <p>{this.state.callback}</p>
               </div>
             }
