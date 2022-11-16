@@ -35,7 +35,6 @@ public class QueryToken extends FlowLogic<String>{
     @Override
     @Suspendable
     public String call() throws FlowException {
-//        QueryCriteria heldByAccount = new QueryCriteria.VaultQueryCriteria().wit(recipientEmail);
         Party openTransact = getOurIdentity();
         //get account info
         AccountInfo account = UtilitiesKt.getAccountService(this).
@@ -47,7 +46,6 @@ public class QueryToken extends FlowLogic<String>{
 
         QueryCriteria queryCriteria = tokenAmountWithIssuerCriteria(MoneyUtilities.getUSD(), openTransact)
                 .and(belongsToAccountCriteria)
-//                .and(heldByAccount)
                 .and(sumTokenCriteria());
         Vault.Page<FungibleToken> results = getServiceHub().getVaultService().queryBy(
                 FungibleToken.class,
