@@ -20,36 +20,38 @@ class Wallet extends React.Component {
 
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleRefresh = this.handleRefresh.bind(this);
     }
 
+    componentDidMount() {
+      this.queryToken();
+    }
 
     handleChange(event) {
       this.setState({ [event.target.name]: event.target.value });
     }
 
     handleSubmit(event) {
+      const queryInfo = JSON.stringify({ 
+        "senderUsername": this.state.username,
+        "receiverUsername": this.state.reUsername,
+        "amount": this.state.reAmount  
+       });
       // console.log('A token was submitted: \nSender: '+ this.state.seEmail+'\nReceiver: '+this.state.reEmail+'\nMessage'+this.state.message);
-      console.log(this.state.storageNode);
-      if (this.state.storageNode == 'C=CN,L=Beijing,O=AsiaEast'){
-        console.log('10051')
-        this.setState({endPoint:'10051'}, this.queryToken);
-      }else if(this.state.storageNode == 'C=US,L=New York,O=USEast3'){
-        console.log('10052')
-        this.setState({endPoint : '10052'}, this.queryToken);
-      }else if(this.state.storageNode == 'C=US,L=San Diego,O=USWest1'){
-        console.log('10053')
-        this.setState({endPoint : '10053'}, this.queryToken);
-      }
+      console.log(`http://localhost:10050/transfer`)    
+      axios.post(`http://localhost:10050/transfer`, queryInfo, {"headers": {"content-type": "application/json",}})
+      .then(
+        response => {
+          console.log(response.data)
+          this.setState({callback:response.data})
+         }
+        );
       event.preventDefault();
     }
 
     queryToken = () => {
       const queryInfo = JSON.stringify({ 
-<<<<<<< HEAD
         "username": this.state.username        
-=======
-        "username": this.state.username
->>>>>>> 6eb8994d98a2bc28203c4d3e178e8fc4c9fae2c7
        });
        console.log(queryInfo);
        console.log(`http://localhost:10050/retrieve`)    
@@ -57,13 +59,18 @@ class Wallet extends React.Component {
        .then(
          response => {
            console.log(response.data)
-           this.setState({callback:response.data})
+           this.setState({callback: response.data})
+           this.setState({amount: response.data.split(' ')[0]})
           }
          );
     }
 
-    render(){
+    handleRefresh(event) {
       this.queryToken();
+      event.preventDefault();
+    }
+
+    render(){
       return (
         <div className="retrieveToken">
           <Container>
@@ -78,10 +85,13 @@ class Wallet extends React.Component {
               </Col>
             </Row>
             <Row>
-              <Col><h3>Logged in as {this.state.username} with ${this.state.amount}</h3></Col>
+              <Col>
+              <h3>Logged in as {this.state.username} with ${this.state.amount}</h3>
+              <button className="btn-info" onClick={this.handleRefresh}>Refresh</button>
+              </Col>
             </Row>
           </Container>
-          <Container>
+          <Container className="mt-3">
             <h4>Transfer USD: </h4>
             <form onSubmit={this.handleSubmit}>
               <div className="form-group">
@@ -98,8 +108,8 @@ class Wallet extends React.Component {
               </div>
               <br />
               <div className="row">
-                <div className="col-10" />
-                <div className="col">
+                <div className="col-9" />
+                <div className="col-3">
                   <button type="submit" className="btn btn-secondary">Execute transfer</button>
                 </div>
               </div>

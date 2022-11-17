@@ -9,6 +9,8 @@ import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.node.NodeInfo;
 import java.util.*;
+
+import net.corda.samples.tokentofriend.flows.TransferToken;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.slf4j.Logger;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.stream.Stream;
 
 import java.util.stream.Collectors;
+
+import static java.lang.Float.parseFloat;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
@@ -106,6 +110,26 @@ public class Controller {
 
         try {
             String result = proxy.startTrackedFlowDynamic(QueryToken.class, receiverStr).getReturnValue().get().toString();
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
+    public ResponseEntity<String> transfer(@RequestBody  String payload){
+
+        System.out.println(payload);
+        JsonObject convertedObject = new Gson().fromJson(payload,JsonObject.class);
+        String senderUsername = convertedObject.get("senderUsername").toString();
+        String senderUsernameStr = senderUsername.substring(1,senderUsername.length()-1);
+        String receiverUsername = convertedObject.get("receiverUsername").toString();
+        String receiverUsernameStr = receiverUsername.substring(1,receiverUsername.length()-1);
+        String amount = convertedObject.get("amount").toString();
+        String amountStr = amount.substring(1,amount.length()-1);
+
+        try {
+            String result = proxy.startTrackedFlowDynamic(TransferToken.class, senderUsernameStr, receiverUsernameStr, parseFloat(amountStr)).getReturnValue().get().toString();
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
