@@ -32,7 +32,7 @@ class Mint extends React.Component {
       });
       console.log(tokenInfo);
 
-      axios.post('http://localhost:10050/createToken', tokenInfo, {"headers": {"content-type": "application/json",}})
+      axios.post('http://localhost:10050/mint', tokenInfo, {"headers": {"content-type": "application/json",}})
       .then(
         response => {
           console.log(response.data)

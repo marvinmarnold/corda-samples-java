@@ -1,5 +1,6 @@
 package net.corda.samples.tokentofriend.webserver;
 
+import com.r3.corda.lib.accounts.workflows.flows.CreateAccount;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.samples.tokentofriend.flows.CreateMyToken;
 import net.corda.samples.tokentofriend.flows.IssueToken;
@@ -108,6 +109,17 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/setup2", method = RequestMethod.POST)
+    public ResponseEntity<String> setup(){
+
+        try {
+            String result = proxy.startTrackedFlowDynamic(CreateMyToken.class).getReturnValue().get().toString();
+            return ResponseEntity.status(HttpStatus.CREATED).body("success22 " + result);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed11 " + e.getMessage());
         }
     }
 }
