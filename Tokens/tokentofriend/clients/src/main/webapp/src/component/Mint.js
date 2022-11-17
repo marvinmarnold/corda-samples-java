@@ -3,13 +3,13 @@ import React from "react";
 import axios from 'axios';
 
 import '../css/App.scss';
-import retrieveToken from './retrieveToken';
+import retrieveToken from './Wallet';
 import Container from 'react-bootstrap/Container'
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 
-class App extends React.Component {
+class Mint extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,8 +53,8 @@ class App extends React.Component {
             <Row>
               <Col md="auto"><h1>Open Transact Wallet</h1></Col>
               <Col md={{offset:2}}>
-                <Link to="/retrieveToken" ><button className="btn btn-primary" >USD Wallet</button></Link>
-                <button className="btn btn-secondary disabled" >Mint USD</button> 
+                <Link to="/wallet" ><button className="btn btn-primary" >Wallet</button></Link>
+                <button className="btn btn-secondary disabled" >Mint</button> 
               </Col>
             </Row>
           </Container>
@@ -84,14 +84,9 @@ class App extends React.Component {
               </div>
             }
           </Container>
-
-
-
-
-
         </div>
       );
     }
   }
 
-  export default App;
+  export default Mint;
