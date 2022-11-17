@@ -10,10 +10,8 @@ import com.r3.corda.lib.tokens.contracts.types.IssuedTokenType;
 import com.r3.corda.lib.tokens.contracts.utilities.AmountUtilities;
 import com.r3.corda.lib.tokens.money.MoneyUtilities;
 import com.r3.corda.lib.tokens.workflows.flows.move.MoveTokensUtilities;
-import com.r3.corda.lib.tokens.workflows.internal.flows.finality.ObserverAwareFinalityFlow;
 import com.r3.corda.lib.tokens.workflows.types.PartyAndAmount;
 import net.corda.core.contracts.Amount;
-import net.corda.core.crypto.TransactionSignature;
 import net.corda.core.flows.*;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.AnonymousParty;
@@ -25,8 +23,6 @@ import net.corda.core.transactions.TransactionBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Collections.emptyList;
