@@ -1,5 +1,6 @@
 package net.corda.samples.tokentofriend.webserver;
 
+import net.corda.core.transactions.SignedTransaction;
 import net.corda.samples.tokentofriend.flows.CreateMyToken;
 import net.corda.samples.tokentofriend.flows.IssueToken;
 import net.corda.samples.tokentofriend.flows.QueryToken;
@@ -79,7 +80,7 @@ public class Controller {
         return myMap;
     }
 
-    @RequestMapping(value = "/createToken", method = RequestMethod.POST)
+    @RequestMapping(value = "/mint", method = RequestMethod.POST)
     public ResponseEntity<String> createToken(@RequestBody  String payload){
 
         System.out.println(payload);
@@ -87,8 +88,8 @@ public class Controller {
         float amount = convertedObject.get("amount").getAsFloat();
 
         try {
-            String result = proxy.startTrackedFlowDynamic(IssueToken.class, amount).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+            SignedTransaction result = proxy.startTrackedFlowDynamic(IssueToken.class, amount).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.CREATED).body(result.toString());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -99,13 +100,11 @@ public class Controller {
 
         System.out.println(payload);
         JsonObject convertedObject = new Gson().fromJson(payload,JsonObject.class);
-        String tokenId = convertedObject.get("tokenId").toString();
-        String tokenIdStr = tokenId.substring(1,tokenId.length()-1);
-        String receiver = convertedObject.get("recipientEmail").toString();
+        String receiver = convertedObject.get("username").toString();
         String receiverStr = receiver.substring(1,receiver.length()-1);
 
         try {
-            String result = proxy.startTrackedFlowDynamic(QueryToken.class,tokenIdStr,receiverStr).getReturnValue().get().toString();
+            String result = proxy.startTrackedFlowDynamic(QueryToken.class, receiverStr).getReturnValue().get().toString();
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

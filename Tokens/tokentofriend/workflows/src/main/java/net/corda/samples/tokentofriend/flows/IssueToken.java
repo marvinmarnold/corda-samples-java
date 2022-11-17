@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @StartableByRPC
 public class IssueToken extends FlowLogic<SignedTransaction>{
 
-    private static String ACEPAY_ACCOUNT_NAME = "acepay-admin";
+    private static String ACEPAY_ACCOUNT_NAME = "admin";
     private float amount;
 
     public IssueToken(float amount) {
