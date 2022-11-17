@@ -45,7 +45,11 @@ class Wallet extends React.Component {
 
     queryToken = () => {
       const queryInfo = JSON.stringify({ 
+<<<<<<< HEAD
         "username": this.state.username        
+=======
+        "username": this.state.username
+>>>>>>> 6eb8994d98a2bc28203c4d3e178e8fc4c9fae2c7
        });
        console.log(queryInfo);
        console.log(`http://localhost:10050/retrieve`)    

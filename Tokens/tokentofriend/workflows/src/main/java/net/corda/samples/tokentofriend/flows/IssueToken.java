@@ -1,38 +1,23 @@
 package net.corda.samples.tokentofriend.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
+import com.r3.corda.lib.accounts.contracts.states.AccountInfo;
 import com.r3.corda.lib.accounts.workflows.UtilitiesKt;
-import com.r3.corda.lib.accounts.workflows.flows.AccountInfoByName;
 import com.r3.corda.lib.accounts.workflows.flows.RequestKeyForAccount;
-import com.r3.corda.lib.tokens.contracts.states.
-        FungibleToken;
+import com.r3.corda.lib.tokens.contracts.states.FungibleToken;
 import com.r3.corda.lib.tokens.contracts.types.IssuedTokenType;
 import com.r3.corda.lib.tokens.contracts.utilities.AmountUtilities;
-import com.r3.corda.lib.tokens.contracts.utilities.TransactionUtilitiesKt;
 import com.r3.corda.lib.tokens.money.MoneyUtilities;
 import com.r3.corda.lib.tokens.workflows.flows.rpc.IssueTokens;
-import com.r3.corda.lib.tokens.workflows.utilities.FungibleTokenBuilder;
-import com.r3.corda.lib.tokens.workflows.utilities.NonFungibleTokenBuilder;
 import net.corda.core.contracts.Amount;
-import net.corda.core.flows.FinalityFlow;
-import net.corda.core.identity.AnonymousParty;
-import net.corda.core.transactions.SignedTransaction;
-import net.corda.core.transactions.TransactionBuilder;
-import net.corda.samples.tokentofriend.states.CustomTokenState;
-import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.flows.StartableByRPC;
-import net.corda.core.identity.AbstractParty;
+import net.corda.core.identity.AnonymousParty;
 import net.corda.core.identity.Party;
-import net.corda.core.node.NodeInfo;
-import net.corda.core.node.services.Vault;
-import net.corda.core.node.services.vault.QueryCriteria;
-import com.r3.corda.lib.accounts.contracts.states.AccountInfo;
+import net.corda.core.transactions.SignedTransaction;
 
-import java.security.PublicKey;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
 @StartableByRPC
 public class IssueToken extends FlowLogic<SignedTransaction>{

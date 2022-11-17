@@ -4,21 +4,18 @@ import co.paralleluniverse.fibers.Suspendable;
 import com.r3.corda.lib.accounts.contracts.states.AccountInfo;
 import com.r3.corda.lib.accounts.workflows.UtilitiesKt;
 import com.r3.corda.lib.tokens.contracts.states.FungibleToken;
-import com.r3.corda.lib.tokens.contracts.states.NonFungibleToken;
 import com.r3.corda.lib.tokens.contracts.types.TokenType;
 import com.r3.corda.lib.tokens.money.MoneyUtilities;
 import com.r3.corda.lib.tokens.workflows.utilities.QueryUtilities;
 import net.corda.core.contracts.Amount;
-import net.corda.core.contracts.StateAndRef;
-import net.corda.core.identity.Party;
-import net.corda.samples.tokentofriend.states.CustomTokenState;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.flows.StartableByRPC;
+import net.corda.core.identity.Party;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
 
-import java.util.*;
+import java.util.Arrays;
 
 import static com.r3.corda.lib.tokens.workflows.utilities.QueryUtilities.sumTokenCriteria;
 import static com.r3.corda.lib.tokens.workflows.utilities.QueryUtilities.tokenAmountWithIssuerCriteria;
