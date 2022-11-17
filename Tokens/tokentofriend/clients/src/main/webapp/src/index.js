@@ -1,19 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import retrieveToken from './component/retrieveToken';
-import App from './component/App';
+import Wallet from './component/Wallet';
+import Mint from './component/Mint';
+import Login from './component/Login';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
-import santaGameCreated from './component/santaGameCreated'
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
     <Router>
       <Switch>
-        <Route exact path="/" component={App} />
-        <Route path="/retrieveToken" component={retrieveToken} />
+        <Route exact path="/" component={Login} />
+        <Route path="/mint" component={Mint} />
+        <Route path="/wallet" component={Wallet} />
       </Switch>
     </Router>,
   document.getElementById('root')

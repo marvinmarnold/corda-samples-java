@@ -3,16 +3,17 @@ import React from "react";
 import axios from 'axios';
 
 import '../css/App.scss';
-import retrieveToken from './retrieveToken';
+import retrieveToken from './Wallet';
 import Container from 'react-bootstrap/Container'
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 
-class App extends React.Component {
+class Mint extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: window.location.search.split("=")[1],
       amount:'',
       callback:''};
 
@@ -53,8 +54,8 @@ class App extends React.Component {
             <Row>
               <Col md="auto"><h1>Open Transact Wallet</h1></Col>
               <Col md={{offset:2}}>
-                <Link to="/retrieveToken" ><button className="btn btn-primary" >USD Wallet</button></Link>
-                <button className="btn btn-secondary disabled" >Mint USD</button> 
+                <Link to={"/wallet?u=" + this.state.username} ><button className="btn btn-secondary" >Wallet</button></Link>
+                <button className="btn btn-primary disabled" >Mint</button> 
               </Col>
             </Row>
           </Container>
@@ -71,7 +72,7 @@ class App extends React.Component {
               <div className="row">
                 <div className="col-10" />
                 <div className="col">
-                  <button type="submit" className="btn btn-primary">Execute mint</button>
+                  <button type="submit" className="btn btn-secondary">Execute mint</button>
                 </div>
               </div>
             </form>
@@ -84,14 +85,9 @@ class App extends React.Component {
               </div>
             }
           </Container>
-
-
-
-
-
         </div>
       );
     }
   }
 
-  export default App;
+  export default Mint;
